@@ -1,7 +1,7 @@
 import React from 'react'
-import { Formik,FormikConfig, FormikValues, Form } from 'formik'
+import { Formik, FormikConfig, FormikValues, Form } from 'formik'
 
-import { Button, Box, CardContent, Card, Grid } from '@material-ui/core'
+import { Button, CardContent, Card, Grid} from '@material-ui/core'
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel'
@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Form1 from './Form1'
 import Form2 from './Form2'
 import Form3 from './Form3'
-
+import * as Yup from 'yup'
 
 const sleep = (time: number) => new Promise(acc => setTimeout(acc, time))
 
@@ -49,10 +49,11 @@ const useStyles = makeStyles({
 
 });
 
-
+const phoneRegExp=/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 export default function Home() {
     const [formValues, setFormValues] = React.useState<FormikValues>(initialValues)
     const classes = useStyles();
+    
     return (
         <div>
             <Card>
@@ -68,11 +69,27 @@ export default function Home() {
 
                         }}
                     >
-                        <Form1 />
 
-                        <Form2 />
 
-                        <Form3 />
+                        <Form1 validationSchema={Yup.object().shape({
+                            firstName: Yup.string().required("This is the required Field"),
+                            lastName: Yup.string().required("This is the required Field"),
+                            cell: Yup.mixed().when('ownMobile', {
+                            is: true,
+                            then: Yup.string().min(10,"Must be 11 characters").matches(phoneRegExp,"Phone number is not valid"),
+                            otherwise: Yup.number().notRequired(),
+                            })})}/>
+
+                        <Form2 validationSchema={Yup.object().shape({
+                            email: Yup.string().required("This is the Required Field").email(),
+                            password: Yup.string().min(5,"Shoud be of 5 characters").required("This is the Required Field"),
+                            confirmPassword:Yup.string().oneOf([Yup.ref("password")],"Passwords do no match").required("This is the Required Field"),
+                        })}/>
+
+                        <Form3 validationSchema={Yup.object().shape({
+                            saySomething: Yup.string().min(5,'Must be greater than 5 Characters').required(),
+                            
+                        })}/>   
 
 
                     </FormikStepper>
@@ -109,11 +126,11 @@ function getSteps() {
     return ['Tell us about Yourself', 'Create Your Account', 'Say Something'];
 }
 export function FormikStepper({ children, ...props }: FormikConfig<FormikValues>) {
-    const childrenArray = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[]
+    const childrenArray = React.Children.toArray(children) as React.Component<FormikStepProps>[]
     const [step, setStep] = React.useState(0)
     const [completed, setCompleted] = React.useState(false)
-    const currentChild = childrenArray[step]
-
+    const currentChild = childrenArray[step] 
+    
     const steps = getSteps()
 
     return (

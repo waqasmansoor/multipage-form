@@ -1,18 +1,14 @@
 import React from 'react'
-import { Field} from 'formik'
+import { Field, FormikConfig,FormikValues} from 'formik'
 import { TextField} from 'formik-material-ui'
-import * as Yup from 'yup'
 import {Box} from '@material-ui/core'
 import {FormikStep} from './Home'
 
-
-export default function Form3(){
+export interface FormikStepProps extends Pick<FormikConfig<FormikValues>, 'children' | 'validationSchema'> { }
+const Form3=({children}:FormikStepProps)=>{
     return(
         
-        <FormikStep validationSchema={Yup.object().shape({
-            saySomething: Yup.string().min(5,'Must be greater than 5 Characters').required(),
-    
-        })}>
+        <FormikStep>
             
         <Box paddingBottom={2} paddingTop={5}>
             <Field fullWidth name='saySomething' type="text" component={TextField} label="Say Something to the World" />
@@ -22,3 +18,4 @@ export default function Form3(){
     </FormikStep>
     )
 }
+export default Form3

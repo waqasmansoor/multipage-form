@@ -1,21 +1,17 @@
 import React from 'react'
-import { Field} from 'formik'
+import { Field,FormikConfig,FormikValues} from 'formik'
 import { TextField, CheckboxWithLabel } from 'formik-material-ui'
-import * as Yup from 'yup'
 import { Box} from '@material-ui/core'
 import {FormikStep} from './Home'
 
-const phoneRegExp=/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-export default function Form1(){
+
+
+export interface FormikStepProps extends Pick<FormikConfig<FormikValues>, 'children' | 'validationSchema'> { }
+
+const Form1=({children}:FormikStepProps)=>{
+    
     return(
-        <FormikStep validationSchema={Yup.object().shape({
-            firstName: Yup.string().required("This is the required Field"),
-            lastName: Yup.string().required("This is the required Field"),
-            cell: Yup.mixed().when('ownMobile', {
-                is: true,
-                then: Yup.string().min(10,"Must be 11 characters").matches(phoneRegExp,"Phone number is not valid"),
-                otherwise: Yup.number().notRequired(),
-        })})}>
+        <FormikStep >
             <Box paddingBottom={2}>
                 <Field fullWidth name='firstName' type="text" component={TextField} label="First Name" />
             </Box>
@@ -31,3 +27,4 @@ export default function Form1(){
         </FormikStep>
     )
 }
+export default Form1

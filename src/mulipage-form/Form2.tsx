@@ -1,18 +1,13 @@
 import React from 'react'
-import { Field} from 'formik'
+import { Field,FormikConfig,FormikValues} from 'formik'
 import { TextField} from 'formik-material-ui'
-import * as Yup from 'yup'
 import { Box} from '@material-ui/core'
 import {FormikStep} from './Home'
 
-
-export default function Form2(){
+export interface FormikStepProps extends Pick<FormikConfig<FormikValues>, 'children' | 'validationSchema'> { }
+const Form2=({children}:FormikStepProps)=>{
     return(
-        <FormikStep validationSchema={Yup.object().shape({
-            email: Yup.string().required("This is the Required Field").email(),
-            password: Yup.string().min(5,"Shoud be of 5 characters").required("This is the Required Field"),
-            confirmPassword:Yup.string().oneOf([Yup.ref("password")],"Passwords do no match").required("This is the Required Field"),
-        })}>
+        <FormikStep>
             <Box paddingBottom={2}>
                 <Field fullWidth name='email' type='email' component={TextField} label="Email" />
             </Box>
@@ -25,3 +20,4 @@ export default function Form2(){
         </FormikStep>
     )
 }
+export default Form2
